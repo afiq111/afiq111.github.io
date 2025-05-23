@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Share My Location</title>
+</head>
+<body>
+  <h2>Hi! Please tap the button to share your location with me.</h2>
+  <button onclick="shareLocation()">Share My Location</button>
+  <p id="status"></p>
+
+  <script>
+    const endpoint = 'AKfycbzn4DjxAPx4pBaIxKweMg6V0LCl73OrCBEhufCaVY4'; // Replace with your Apps Script Web App URL
+
+    function shareLocation() {
+      const status = document.getElementById('status');
+
+      if (!navigator.geolocation) {
+        status.innerText = "Geolocation is not supported by your browser.";
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const data = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          };
+
+          fetch(endpoint, {
+            method: 'POST',
+            body: JSON.stringify(data),
+            contentType: 'application/json'
+          })
+          .then(response => response.text())
+          .then(res => {
+            status.innerText = "Location shared successfully!";
+          })
+          .catch(err => {
+            status.innerText = "Failed to send location.";
+          });
+        },
+        () => {
+          status.innerText = "Unable to get your location.";
+        }
+      );
+    }
+  </script>
+</body>
+</html>
